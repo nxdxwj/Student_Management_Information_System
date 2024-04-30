@@ -35,6 +35,12 @@ class StudentList:
                 return True
         return False
 
+    def __exists(self,name):
+        for student in self.studentList:
+            if student.name == name:
+                return True
+        return False
+
     def add(self):
         while True:
             id = input("学号：")
