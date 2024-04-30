@@ -52,22 +52,27 @@ class StudentList:
                 if choice == "n":
                     break
 
+    def show_menu(self):
+        print("\n" + "-" * 40)
+        print("|{: ^30}|".format("学生基本信息管理系统"))
+        print("-" * 40)
+        print("|{:<3} {:<30}|".format("1)", "展示学生信息"))
+        print("|{:<3} {:<30}|".format("2)", "添加学生信息"))
+        print("|{:<3} {:<31}|".format("3)", "结束系统"))
+        print("-" * 40)
+
     def infoProcess(self):
-        print("--------学生基本信息管理系统--------")
-        print("show----------展示学生信息")
-        print("add----------添加学生信息")
-        print("exit----------结束系统")
-        print("----------------------------------")
         while True:
-            s = input("info==>").strip().lower()
-            if s == "show":
+            self.show_menu()
+            s = input("\033[94minfo==> \033[0m").strip().lower()
+            if s == "1":
                 self.show()
-            elif s == "add":
+            elif s == "2":
                 self.add()
-            elif s == "exit":
+            elif s == "3":
                 break
             else:
-                print("输入错误")
+                print("\033[91m输入错误\033[0m")
 
 
 if __name__ == '__main__':
