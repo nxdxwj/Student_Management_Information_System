@@ -1,30 +1,35 @@
 class Student:
-    def __init__(self,id,name,Chinese,Math,English):
+    def __init__(self, id, name, Chinese, Math, English):
         self.id = id
         self.name = name
         self.Chinese = int(Chinese)
         self.Math = int(Math)
         self.English = int(English)
+
+
 class StudentList:
     def __init__(self):
         self.studentList = []
+
     def show(self):
         print("{:8}\t{:8}\t{:8}\t{:8}\t{:8}"
-              .format("学号","姓名","语文","数学","英语"))
+              .format("学号", "姓名", "语文", "数学", "英语"))
         for student in self.studentList:
             print('{:8}\t{:8}\t{:<8}\t{:<8}\t{:<8}'
-                  .format(student.id,student.name,student.Chinese,student.Math,student.English))
+                  .format(student.id, student.name, student.Chinese, student.Math, student.English))
 
-    def __enterScore(self,message):
+    def __enterScore(self, message):
         while True:
-            score = int(input(message))
-            if 0 <= score <= 100:
-                break
-            else:
-                print("输入错误，成绩应该在0-100之间")
-        return score
+            try:
+                score = int(input(message))
+                if 0 <= score <= 100:
+                    return score
+                else:
+                    print("输入错误，成绩应该在0-100之间")
+            except ValueError:
+                print("输入错误，请输入一个整数")
 
-    def __exists(self,id):
+    def __exists(self, id):
         for student in self.studentList:
             if student.id == id:
                 return True
@@ -41,7 +46,7 @@ class StudentList:
                 Chinese = self.__enterScore("语文成绩：")
                 Math = self.__enterScore("数学成绩：")
                 English = self.__enterScore("英语成绩：")
-                student = Student(id,name,Chinese,Math,English)
+                student = Student(id, name, Chinese, Math, English)
                 self.studentList.append(student)
                 choice = input("继续添加（y/n）？").lower()
                 if choice == "n":
@@ -67,3 +72,4 @@ class StudentList:
 
 if __name__ == '__main__':
     studentList = StudentList()
+    studentList.infoProcess()
