@@ -52,6 +52,27 @@ class StudentList:
                 if choice == "n":
                     break
 
+    def find_by_id(self, id):
+        for student in self.studentList:
+            if student.id == id:
+                return student
+        return None
+
+    def find_by_name_keyword(self, keyword):
+        results = []
+        for student in self.studentList:
+            if keyword.lower() in student.name.lower():
+                results.append(student)
+        return results
+
+    def delete(self, id):
+        for student in self.studentList:
+            if student.id == id:
+                self.studentList.remove(student)
+                print("学生信息已删除！")
+                return
+        print("未找到该学生信息！")
+
     def show_menu(self):
         print("\n" + "-" * 40)
         print("|{: ^30}|".format("学生基本信息管理系统"))
