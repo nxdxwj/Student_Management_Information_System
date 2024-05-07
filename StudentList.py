@@ -1,4 +1,5 @@
 import Student
+import pandas as pd
 class StudentList:
     def __init__(self):
         self.studentList = []
@@ -44,7 +45,7 @@ class StudentList:
                 Chinese = self.__enterScore("语文成绩：")
                 Math = self.__enterScore("数学成绩：")
                 English = self.__enterScore("英语成绩：")
-                student = Student(id, name, Chinese, Math, English)
+                student = Student.Student(id, name, Chinese, Math, English)
                 self.studentList.append(student)
                 choice = input("继续添加（y/n）？").lower()
                 if choice == "n":
@@ -147,5 +148,10 @@ class StudentList:
             else:
                 print("\033[91m输入错误\033[0m")
 
-    #def save(self):
+    def save(self):
+        columns = ["学号","姓名","语文","数学","英语"]
+        df = pd.DataFrame(self.studentList,columns)
+        df.to_excel("studentList.xlsx",index=False)
+
+    
 
