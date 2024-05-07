@@ -163,6 +163,7 @@ class StudentList:
         df = pd.DataFrame(data,columns)
         df.to_excel("studentList.xlsx",index=False)
 
+
     def load(self):
         df = pd.read_excel("studentList.xlsx")
         df_li = df.values.tolist()
@@ -175,4 +176,3 @@ class StudentList:
             self.studentList.append(student)
 
     
-
