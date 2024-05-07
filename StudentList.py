@@ -152,6 +152,3 @@ class StudentList:
         columns = ["学号","姓名","语文","数学","英语"]
         df = pd.DataFrame(self.studentList,columns)
         df.to_excel("studentList.xlsx",index=False)
-
-    
-
