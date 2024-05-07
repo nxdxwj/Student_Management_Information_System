@@ -160,7 +160,7 @@ class StudentList:
     def save(self):
         columns = ["学号","姓名","语文","数学","英语"]
         data = [[student.id, student.name, student.Chinese, student.Math, student.English] for student in self.studentList]
-        df = pd.DataFrame(self.studentList,columns)
+        df = pd.DataFrame(data,columns)
         df.to_excel("studentList.xlsx",index=False)
 
     def load(self):
