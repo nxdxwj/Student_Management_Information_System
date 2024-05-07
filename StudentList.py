@@ -168,10 +168,11 @@ class StudentList:
         df = pd.read_excel("studentList.xlsx")
         df_li = df.values.tolist()
         for each_student in df_li:
-            name = each_student[0]
-            Chinese = each_student[1]
-            Math = each_student[2]
-            English = each_student[3]
+            id = each_student[0]
+            name = each_student[1]
+            Chinese = each_student[2]
+            Math = each_student[3]
+            English = each_student[4]
             student = Student.Student(id, name, Chinese, Math, English)
             self.studentList.append(student)
 
