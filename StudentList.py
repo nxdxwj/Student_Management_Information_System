@@ -109,9 +109,9 @@ class StudentList:
                 self.show()
             elif s == "2":
                 self.add()
-            elif s == "3":
+            elif s == "5":
                 break
-            elif s == "4":
+            elif s == "3":
                 id = input("请输入学生学号：")
                 action = input("请选择操作（find/delete/update）：").strip().lower()
                 if action == "find":
@@ -131,7 +131,7 @@ class StudentList:
                     self.update(id)
                 else:
                     print("无效操作！")
-            elif s == "5":
+            elif s == "4":
                 keyword = input("请输入要查找的姓名关键字：")
                 results = self.find_by_name_keyword(keyword)
                 if results:
