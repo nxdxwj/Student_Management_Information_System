@@ -146,3 +146,6 @@ class StudentList:
                     print("未找到匹配的学生信息！")
             else:
                 print("\033[91m输入错误\033[0m")
+
+    #def save(self):
+
