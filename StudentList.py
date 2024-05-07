@@ -1,5 +1,7 @@
 import Student
 import pandas as pd
+
+
 class StudentList:
     def __init__(self):
         self.studentList = []
@@ -28,7 +30,7 @@ class StudentList:
                 return True
         return False
 
-    def __exists(self,name):
+    def __exists(self, name):
         for student in self.studentList:
             if student.name == name:
                 return True
@@ -89,7 +91,6 @@ class StudentList:
             print("学生信息已更新！")
         else:
             print("未找到该学生信息！")
-
 
     def show_menu(self):
         print("\n" + "-" * 40)
@@ -158,11 +159,17 @@ class StudentList:
                 print("\033[91m输入错误\033[0m")
 
     def save(self):
-        columns = ["学号","姓名","语文","数学","英语"]
-        data = [[student.id, student.name, student.Chinese, student.Math, student.English] for student in self.studentList]
-        df = pd.DataFrame(data,columns)
-        df.to_excel("studentList.xlsx",index=False)
-
+        columns = ["学号", "姓名", "语文", "数学", "英语"]
+        id_list = []
+        name_list = []
+        chinese_list = []
+        math_list = []
+        english_list = []
+        data = [[student.id, student.name, student.Chinese, student.Math, student.English] for student in
+                self.studentList]
+        df = pd.DataFrame(data, columns=["学号", "姓名", "语文", "数学", "英语"])
+        # 将数据写入Excel文件
+        df.to_excel('studentlist.xlsx', index=False)
 
     def load(self):
         df = pd.read_excel("studentList.xlsx")
@@ -176,4 +183,5 @@ class StudentList:
             student = Student.Student(id, name, Chinese, Math, English)
             self.studentList.append(student)
 
-    
+
+
