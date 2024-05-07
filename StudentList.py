@@ -99,7 +99,9 @@ class StudentList:
         print("|{:<3} {:<30}|".format("2)", "添加学生信息"))
         print("|{:<3} {:<24}|".format("3)", "根据学号查找、删除、更新学生信息"))
         print("|{:<3} {:<26}|".format("4)", "根据姓名关键字查找学生信息"))
-        print("|{:<3} {:<31}|".format("5)", "结束系统"))
+        print("|{:<3} {:<31}|".format("5)", "保存数据"))
+        print("|{:<3} {:<31}|".format("6)", "导入数据"))
+        print("|{:<3} {:<31}|".format("7)", "结束系统"))
         print("-" * 40)
 
     def infoProcess(self):
@@ -110,7 +112,7 @@ class StudentList:
                 self.show()
             elif s == "2":
                 self.add()
-            elif s == "5":
+            elif s == "7":
                 break
             elif s == "3":
                 id = input("请输入学生学号：")
@@ -145,10 +147,32 @@ class StudentList:
                         print("英语成绩：", student.English)
                 else:
                     print("未找到匹配的学生信息！")
+            elif s == "5":
+                self.save()
+                print("保存成功")
+            elif s == "6":
+                self.load()
+                print("导入成功")
+
             else:
                 print("\033[91m输入错误\033[0m")
 
     def save(self):
         columns = ["学号","姓名","语文","数学","英语"]
+        data = [[student.id, student.name, student.Chinese, student.Math, student.English] for student in self.studentList]
         df = pd.DataFrame(self.studentList,columns)
         df.to_excel("studentList.xlsx",index=False)
+
+
+    def load(self):
+        df = pd.read_excel("studentList.xlsx")
+        df_li = df.values.tolist()
+        for each_student in df_li:
+            name = each_student[0]
+            Chinese = each_student[1]
+            Math = each_student[2]
+            English = each_student[3]
+            student = Student.Student(id, name, Chinese, Math, English)
+            self.studentList.append(student)
+
+    
