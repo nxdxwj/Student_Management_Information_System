@@ -14,7 +14,7 @@ class StudentList:
                 self.show()
             elif s == "2":
                 self.add()
-            elif s == "7":
+            elif s == "8":
                 break
             elif s == "3":
                 id = int(input("请输入学生学号："))
@@ -55,6 +55,8 @@ class StudentList:
             elif s == "6":
                 self.load()
                 print("导入成功!")
+            elif s == "7":
+                self.sort_by_subject()
 
             else:
                 print("\033[91m输入错误\033[0m")
@@ -66,7 +68,21 @@ class StudentList:
             print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}'
                   .format(student.id, student.name, student.Chinese, student.Math, student.English))
 
+    def sort_by_subject(self):
+        subject = input("请选择要按照哪个科目排序（语文/数学/英语）：").strip().lower()
+        if subject == "语文":
+            self.sort_by_chinese()
+        elif subject == "数学":
+            self.sort_by_math()
+        elif subject == "英语":
+            self.sort_by_english()
+        else:
+            print("无效的科目选择！")
+            return
+        print("按照{}成绩排序完成：".format(subject))
+        self.show_sorted()
     def __enterScore(self, score):
+
         while True:
             try:
                 score = int(input(score))
@@ -157,7 +173,8 @@ class StudentList:
         print(" {:<3} {:<25}|".format("4)", "根据姓名关键字查找学生信息"))
         print(" {:<3} {:<31}|".format("5)", "保存数据"))
         print(" {:<3} {:<31}|".format("6)", "导入数据"))
-        print(" {:<3} {:<31}|".format("7)", "结束系统"))
+        print(" {:<3} {:<31}|".format("7)", "将成绩排序"))
+        print(" {:<3} {:<31}|".format("8)", "结束系统"))
         print("-" * 40)
 
 
@@ -166,7 +183,7 @@ class StudentList:
         data = [[student.id, student.name, student.Chinese, student.Math, student.English] for student in self.studentList]
         df = pd.DataFrame(data, columns=["学号", "姓名", "语文", "数学", "英语"])
         # 将数据写入Excel文件
-        df.to_excel('studentlist.xlsx', index=False)
+        df.to_excel('StudentList.xlsx', index=False)
 
     def load(self):
         df = pd.read_excel("studentList.xlsx")
@@ -180,5 +197,19 @@ class StudentList:
             student = Student.Student(id, name, Chinese, Math, English)
             self.studentList.append(student)
 
+    def sort_by_chinese(self):
+        self.studentList.sort(key=lambda x: x.Chinese, reverse=True)
 
+    def sort_by_math(self):
+        self.studentList.sort(key=lambda y: y.Math, reverse=True)
+
+    def sort_by_english(self):
+        self.studentList.sort(key=lambda z: z.English, reverse=True)
+
+    def show_sorted(self):
+        print("{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}"
+              .format("学号", "姓名", "语文", "数学", "英语"))
+        for student in self.studentList:
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student.id, student.name, student.Chinese, student.Math, student.English))
 
