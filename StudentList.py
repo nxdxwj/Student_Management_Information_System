@@ -28,6 +28,7 @@ class StudentList:
                         print("语文成绩：", student.Chinese)
                         print("数学成绩：", student.Math)
                         print("英语成绩：", student.English)
+                        print("总分：", student.totalScore)
                     else:
                         print("未找到该学生信息！")
                 elif action == "delete":
@@ -47,6 +48,7 @@ class StudentList:
                         print("语文成绩：", student.Chinese)
                         print("数学成绩：", student.Math)
                         print("英语成绩：", student.English)
+                        print("总分：", student.totalScore)
                 else:
                     print("未找到匹配的学生信息！")
             elif s == "5":
@@ -62,20 +64,22 @@ class StudentList:
                 print("\033[91m输入错误\033[0m")
             input("\nPress enter key to continue...")
     def show(self):
-        print("{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}"
-              .format("学号", "姓名", "语文", "数学", "英语"))
+        print("{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}"
+              .format("学号", "姓名", "语文", "数学", "英语", "总分"))
         for student in self.studentList:
-            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}'
-                  .format(student.id, student.name, student.Chinese, student.Math, student.English))
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student.id, student.name, student.Chinese, student.Math, student.English, student.totalScore))
 
     def sort_by_subject(self):
-        subject = input("请选择要按照哪个科目排序（语文/数学/英语）：").strip().lower()
+        subject = input("请选择要按照哪个科目排序（语文/数学/英语/总分）：").strip().lower()
         if subject == "语文":
             self.sort_by_chinese()
         elif subject == "数学":
             self.sort_by_math()
         elif subject == "英语":
             self.sort_by_english()
+        elif subject == "总分":
+            self.sort_by_total_score()
         else:
             print("无效的科目选择！")
             return
@@ -118,7 +122,8 @@ class StudentList:
                 Chinese = self.__enterScore("语文成绩：")
                 Math = self.__enterScore("数学成绩：")
                 English = self.__enterScore("英语成绩：")
-                student = Student.Student(id, name, Chinese, Math, English)
+                totalScore = Chinese + Math + English
+                student = Student.Student(id, name, Chinese, Math, English, totalScore)
                 self.studentList.append(student)
                 choice = input("继续添加（y/n）？").lower()
                 if choice == "n":
@@ -169,11 +174,11 @@ class StudentList:
         print("-" * 40)
         print(" {:<3} {:<30}|".format("1)", "展示学生信息"))
         print(" {:<3} {:<30}|".format("2)", "添加学生信息"))
-        print(" {:<3} {:<23}|".format("3)", "根据学号查找、删除、更新学生信息"))
-        print(" {:<3} {:<25}|".format("4)", "根据姓名关键字查找学生信息"))
+        print(" {:<3} {:<24}|".format("3)", "根据学号查找、删除、更新学生信息"))
+        print(" {:<3} {:<26}|".format("4)", "根据姓名关键字查找学生信息"))
         print(" {:<3} {:<31}|".format("5)", "保存数据"))
         print(" {:<3} {:<31}|".format("6)", "导入数据"))
-        print(" {:<3} {:<31}|".format("7)", "将成绩排序"))
+        print(" {:<3} {:<30}|".format("7)", "将成绩排序"))
         print(" {:<3} {:<31}|".format("8)", "结束系统"))
         print("-" * 40)
 
@@ -194,7 +199,7 @@ class StudentList:
             Chinese = each_student[2]
             Math = each_student[3]
             English = each_student[4]
-            student = Student.Student(id, name, Chinese, Math, English)
+            student = Student.Student(id, name, Chinese, Math, English, Chinese + Math + English)
             self.studentList.append(student)
 
     def sort_by_chinese(self):
@@ -206,10 +211,12 @@ class StudentList:
     def sort_by_english(self):
         self.studentList.sort(key=lambda z: z.English, reverse=True)
 
-    def show_sorted(self):
-        print("{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}"
-              .format("学号", "姓名", "语文", "数学", "英语"))
-        for student in self.studentList:
-            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}'
-                  .format(student.id, student.name, student.Chinese, student.Math, student.English))
+    def sort_by_total_score(self):
+        self.studentList.sort(key=lambda x: x.totalScore, reverse=True)
 
+    def show_sorted(self):
+        print("{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}"
+              .format("学号", "姓名", "语文", "数学", "英语", "总分"))
+        for student in self.studentList:
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student.id, student.name, student.Chinese, student.Math, student.English, student.totalScore))
