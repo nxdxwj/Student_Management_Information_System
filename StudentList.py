@@ -1,12 +1,38 @@
-import Student
+import sqlite3
 import pandas as pd
-
 
 class StudentList:
     def __init__(self):
-        self.studentList = []
+        self.conn = ''
+        self.cur = ''
+    def connect(self,db):
+        self.conn = sqlite3.connect(db)
+        self.cur = self.conn.cursor()
+        try:
+            sql = '''
+            create table studentList (
+            序号 integer autoincrement,
+            学号 integer ,
+            姓名 text,
+            专业 text,
+            年级 text,
+            高等数学 integer,
+            大学物理 integer,
+            Python程序设计基础 integer,
+            )
+            '''
+            self.cur.execute(sql)
+            self.conn.commit()
+        except:
+            pass
 
-    def infoProcess(self):
+    def close(self):
+        self.conn.commit()
+        self.cur.close()
+        self.conn.close()
+
+    def infoProcess(self,db):
+        self.connect(db)
         while True:
             self.show_menu()
             s = input("\033[94minfo==> \033[0m").strip().lower()
@@ -14,22 +40,11 @@ class StudentList:
                 self.show()
             elif s == "2":
                 self.add()
-            elif s == "7":
-                break
             elif s == "3":
                 id = int(input("请输入学生学号："))
                 action = input("请选择操作（find/delete/update）：").strip().lower()
                 if action == "find":
-                    student = self.find_by_id(id)
-                    if student:
-                        print("学生信息已找到：")
-                        print("学号：", student.id)
-                        print("姓名：", student.name)
-                        print("语文成绩：", student.Chinese)
-                        print("数学成绩：", student.Math)
-                        print("英语成绩：", student.English)
-                    else:
-                        print("未找到该学生信息！")
+                    print(self.find_by_id(id))
                 elif action == "delete":
                     self.delete(id)
                 elif action == "update":
@@ -38,33 +53,29 @@ class StudentList:
                     print("无效操作！")
             elif s == "4":
                 keyword = input("请输入要查找的姓名关键字：")
-                results = self.find_by_name_keyword(keyword)
-                if results:
-                    print("查找结果：")
-                    for student in results:
-                        print("学号：", student.id)
-                        print("姓名：", student.name)
-                        print("语文成绩：", student.Chinese)
-                        print("数学成绩：", student.Math)
-                        print("英语成绩：", student.English)
-                else:
-                    print("未找到匹配的学生信息！")
+                print(self.find_by_name_keyword(keyword))
             elif s == "5":
                 self.save()
                 print("保存成功")
             elif s == "6":
-                self.load()
-                print("导入成功!")
-
+                print("See you ~")
+                break
             else:
                 print("\033[91m输入错误\033[0m")
             input("\nPress enter key to continue...")
+
+        self.close()
     def show(self):
-        print("{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}"
-              .format("学号", "姓名", "语文", "数学", "英语"))
-        for student in self.studentList:
-            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}'
-                  .format(student.id, student.name, student.Chinese, student.Math, student.English))
+        print("{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}"
+              .format("序号","学号", "姓名", "专业","年级","高等数学", "大学物理", "Python程序设计基础"))
+        sql = 'select * from studentList'
+        self.cur.execute(sql)
+        rows = self.cur.fetchall()
+
+        for student in rows:
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student[0], student[1], student[2], student[3], student[4],student[5],student[6],student[7]))
+
 
     def __enterScore(self, score):
         while True:
@@ -79,70 +90,77 @@ class StudentList:
 
     #按照 id 查看学生是否存在
     def __exists(self, id):
-        for student in self.studentList:
-            if student.id == id:
-                return True
+        sql = 'select * from studentList where 学号 = ?'
+        result = self.cur.execute(sql,(id,))
+        rows = result.fetchall()
+        if len(rows) >0:
+            return True
         return False
 
     # 按照 name 查看学生是否存在
-    def __exists(self, name):
-        for student in self.studentList:
-            if student.name == name:
-                return True
-        return False
+    def __add(self,id,Name,Major,Year,Math,Physics,Python):
+        sql = 'insert into studentList(学号,姓名,专业,年级,高等数学,大学物理,Python程序设计基础) values (?,?,?,?,?,?,?)'
+        self.cur.execute(sql,(id,Name,Major,Year,Math,Physics,Python))
+        self.conn.commit()
+        print("添加成功")
 
     def add(self):
         while True:
-            id = input("学号：")
+            id = int(input("学号："))
             if self.__exists(id):
                 print("该学号已存在，请重新输入！")
                 continue
             else:
                 name = input("姓名：")
-                Chinese = self.__enterScore("语文成绩：")
-                Math = self.__enterScore("数学成绩：")
-                English = self.__enterScore("英语成绩：")
-                student = Student.Student(id, name, Chinese, Math, English)
-                self.studentList.append(student)
+                major = input("专业：")
+                year = input("年级：")
+                math = self.__enterScore("高等数学成绩：")
+                physics = self.__enterScore("大学物理成绩：")
+                python = self.__enterScore("Python程序设计基础成绩：")
+                self.__add(id,name,major,year,math,physics,python)
                 choice = input("继续添加（y/n）？").lower()
                 if choice == "n":
                     break
 
     def find_by_id(self, id):
-        for student in self.studentList:
-            if student.id == id:
-                return student
-        return None
+        sql = 'select * from studentList where 学号 = %d' %id
+        self.cur.execute(sql)
+        data = self.cur.fetchall()
+        return data[0]
 
-    def find_by_name_keyword(self, keyword):
-        results = []
-        for student in self.studentList:
-            if keyword.lower() in student.name.lower():
-                results.append(student)
-        return results
+    def find_by_name_keyword(self, name):
+        sql = 'select * from studentList where 姓名 = ?'
+        self.cur.execute(sql, (name,))
+        data = self.cur.fetchall()
+        return data[0]
 
+    def __delete(self,id):
+        sql = 'delete from studentList where 学号 = ?'
+        self.cur.execute(sql,(id,))
+        self.conn.commit()
     def delete(self, id):
-        for student in self.studentList:
-            if student.id == id:
-                self.studentList.remove(student)
-                print("学生信息已删除！")
-                return
+        if self.__exists(id):
+            self.__delete(id)
+            print("学生信息已删除！")
+            return
         print("未找到该学生信息！")
 
+    def __update(self,id,math,physics,python):
+        sql = 'update studentList set 高等数学=?, 大学物理=?, Python程序设计基础=? where 学号=?'
+        self.cur.execute(sql,(math,physics,python,id))
+        self.conn.commit()
     def update_by_id(self, id):
         student = self.find_by_id(id)
         if student:
             print("学生信息已找到：")
-            print("学号：", student.id)
-            print("姓名：", student.name)
-            print("语文成绩：", student.Chinese)
-            print("数学成绩：", student.Math)
-            print("英语成绩：", student.English)
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student[0], student[1], student[2], student[3], student[4], student[5], student[6],
+                          student[7]))
             print("请输入更新后的信息：")
-            student.name = input("姓名：")
-            student.Chinese = self.__enterScore("语文成绩：")
-            student.Math = self.__enterScore("数学成绩：")
-            student.English = self.__enterScore("英语成绩：")
+            math = self.__enterScore("高等数学成绩：")
+            physics = self.__enterScore("大学物理成绩：")
+            python = self.__enterScore("Python程序设计基础成绩：")
+            self.__update(id,math,physics,python)
             print("学生信息已更新！")
         else:
             print("未找到该学生信息！")
@@ -156,29 +174,20 @@ class StudentList:
         print(" {:<3} {:<23}|".format("3)", "根据学号查找、删除、更新学生信息"))
         print(" {:<3} {:<25}|".format("4)", "根据姓名关键字查找学生信息"))
         print(" {:<3} {:<31}|".format("5)", "保存数据"))
-        print(" {:<3} {:<31}|".format("6)", "导入数据"))
-        print(" {:<3} {:<31}|".format("7)", "结束系统"))
+        print(" {:<3} {:<31}|".format("6)", "结束系统"))
         print("-" * 40)
 
 
 
     def save(self):
-        data = [[student.id, student.name, student.Chinese, student.Math, student.English] for student in self.studentList]
-        df = pd.DataFrame(data, columns=["学号", "姓名", "语文", "数学", "英语"])
+        sql = 'select * from studentList'
+        self.cur.execute(sql)
+        data = self.cur.fetchall()
+        data = [[student[1], student[2], student[3], student[4], student[5], student[6], student[7]] for student in data]
+        df = pd.DataFrame(data, columns=["学号", "姓名", "专业", "年级", "高等数学","大学物理","Python程序设计基础"])
         # 将数据写入Excel文件
         df.to_excel('studentlist.xlsx', index=False)
 
-    def load(self):
-        df = pd.read_excel("studentList.xlsx")
-        df_li = df.values.tolist()
-        for each_student in df_li:
-            id = each_student[0]
-            name = each_student[1]
-            Chinese = each_student[2]
-            Math = each_student[3]
-            English = each_student[4]
-            student = Student.Student(id, name, Chinese, Math, English)
-            self.studentList.append(student)
 
 
 
