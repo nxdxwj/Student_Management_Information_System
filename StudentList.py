@@ -1,10 +1,29 @@
 import sqlite3
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+
+# 设置字体路径
+font_path = 'C:/Windows/Fonts/SimHei.ttf'  # 修改为实际字体文件路径
+font_prop = font_manager.FontProperties(fname=font_path)
+plt.rcParams['font.sans-serif'] = font_prop.get_name()
+plt.rcParams['axes.unicode_minus'] = False  # 解决负号 '-' 显示为方块的问题
+
 
 class StudentList:
     def __init__(self):
         self.conn = ''
         self.cur = ''
+
+    def connect(self, db):
+        try:
+            self.conn = sqlite3.connect(db)
+            self.cur = self.conn.cursor()
+            self.create_table()
+        except sqlite3.Error as e:
+            print("Error connecting to SQLite database:", e)
+
+
     def connect(self,db):
         self.conn = sqlite3.connect(db)
         self.cur = self.conn.cursor()
@@ -60,6 +79,8 @@ class StudentList:
                 self.save()
                 print("保存成功")
             elif s == "7":
+                self.plot_subject_scores()  # 调用绘制图表方法
+            elif s == "8":
                 print("See you ~")
                 break
             else:
@@ -177,7 +198,8 @@ class StudentList:
         print(" {:<3} {:<25}|".format("4)", "根据姓名关键字查找学生信息"))
         print(" {:<3} {:<25}|".format("5)", "排序"))
         print(" {:<3} {:<31}|".format("6)", "保存数据"))
-        print(" {:<3} {:<28}|".format("7)", "结束系统"))
+        print(" {:<3} {:<25}|".format("7)", "绘制成绩图表"))
+        print(" {:<3} {:<25}|".format("8)", "结束系统"))
         print("-" * 40)
 
     def __show_sort_menu(self):
@@ -259,6 +281,38 @@ class StudentList:
         df = pd.DataFrame(data, columns=["学号", "姓名", "专业", "年级", "高等数学","大学物理","Python程序设计基础"])
         # 将数据写入Excel文件
         df.to_excel('studentlist.xlsx', index=False)
+
+    def plot_subject_scores(self):
+        try:
+            sql = 'SELECT 高等数学, 大学物理, Python程序设计基础 FROM studentList'
+            self.cur.execute(sql)
+            data = self.cur.fetchall()
+
+            if not data:
+                print("No data found in the database.")
+                return
+
+            math_scores = [row[0] for row in data]
+            physics_scores = [row[1] for row in data]
+            python_scores = [row[2] for row in data]
+
+            subjects = ['高等数学', '大学物理', 'Python程序设计基础']
+            average_scores = [
+                sum(math_scores) / len(math_scores) if math_scores else 0,
+                sum(physics_scores) / len(physics_scores) if physics_scores else 0,
+                sum(python_scores) / len(python_scores) if python_scores else 0
+            ]
+
+            plt.figure(figsize=(10, 6))
+            plt.bar(subjects, average_scores, color=['blue', 'green', 'red'])
+            plt.xlabel('科目')
+            plt.ylabel('平均成绩')
+            plt.title('学生平均成绩')
+            plt.ylim(0, 100)
+            plt.show()
+
+        except sqlite3.Error as e:
+            print("Error fetching data:", e)
 
 
 
