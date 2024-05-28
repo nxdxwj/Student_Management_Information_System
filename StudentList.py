@@ -55,9 +55,11 @@ class StudentList:
                 keyword = input("请输入要查找的姓名关键字：")
                 print(self.find_by_name_keyword(keyword))
             elif s == "5":
+                self.__sort_menu()
+            elif s == "6":
                 self.save()
                 print("保存成功")
-            elif s == "6":
+            elif s == "7":
                 print("See you ~")
                 break
             else:
@@ -66,7 +68,7 @@ class StudentList:
 
         self.close()
     def show(self):
-        print("{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}"
+        print("{:<10}\t{:<14}\t{:<10}\t{:<10}\t{:<10}\t{:<6}\t{:<6}\t{:<10}"
               .format("序号","学号", "姓名", "专业","年级","高等数学", "大学物理", "Python程序设计基础"))
         sql = 'select * from studentList'
         self.cur.execute(sql)
@@ -173,9 +175,79 @@ class StudentList:
         print(" {:<3} {:<30}|".format("2)", "添加学生信息"))
         print(" {:<3} {:<23}|".format("3)", "根据学号查找、删除、更新学生信息"))
         print(" {:<3} {:<25}|".format("4)", "根据姓名关键字查找学生信息"))
-        print(" {:<3} {:<31}|".format("5)", "保存数据"))
-        print(" {:<3} {:<31}|".format("6)", "结束系统"))
+        print(" {:<3} {:<25}|".format("5)", "排序"))
+        print(" {:<3} {:<31}|".format("6)", "保存数据"))
+        print(" {:<3} {:<28}|".format("7)", "结束系统"))
         print("-" * 40)
+
+    def __show_sort_menu(self):
+        print("\n" + "-" * 40)
+        print("{: ^30}".format("学生基本信息管理系统"))
+        print("-" * 40)
+        print(" {:<3} {:<30}|".format("1)", "按高等数学成绩排序"))
+        print(" {:<3} {:<30}|".format("2)", "按大学物理成绩排序"))
+        print(" {:<3} {:<23}|".format("3)", "按Python程序设计基础排序"))
+        print("-" * 40)
+    def __sort_menu(self):
+        while True:
+            self.__show_sort_menu()
+            s = input("\033[94minfo==> \033[0m").strip().lower()
+            if s == "1":
+                self.sort_math()
+            elif s == "2":
+                self.sort_collegePhysics()
+            elif s == "3":
+                self.sort_programming()
+            else:
+                print("\033[91m输入错误\033[0m")
+            input("\nPress enter key to continue...")
+    def sort_collegePhysics(self):
+        sql = 'select * from studentList '
+        self.cur.execute(sql)
+        data = self.cur.fetchall()
+        data = [student[6] for student in data]
+        data.sort(reverse=True)
+
+        sql = 'select * from studentlist where 大学物理=?'
+        print("{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}"
+              .format("序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"))
+        for each_student_physics in data:
+            self.cur.execute(sql, (each_student_physics,))
+            student = self.cur.fetchall()[0]
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student[0], student[1], student[2], student[3], student[4], student[5], student[6], student[7]))
+
+    def sort_programming(self):
+        sql = 'select * from studentList'
+        self.cur.execute(sql)
+        data = self.cur.fetchall()
+        data = [student[7] for student in data]
+        data.sort(reverse=True)
+
+        sql = 'select * from studentlist where Python程序设计基础=?'
+        print("{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}\t{:<10}"
+              .format("序号", "学号", "姓名", "专业", "年级", "高等数学", "大学物理", "Python程序设计基础"))
+        for each_student_programming in data:
+            self.cur.execute(sql, (each_student_programming,))
+            student = self.cur.fetchall()[0]
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student[0], student[1], student[2], student[3], student[4], student[5], student[6],
+                          student[7]))
+    def sort_math(self):
+        sql = 'select * from studentList'
+        self.cur.execute(sql)
+        data = self.cur.fetchall()
+        data = [student[5] for student in data]
+        data.sort(reverse=True)
+
+        sql = 'select * from studentList where 高等数学=?'
+        print("{:<10}\t{:<14}\t{:<10}\t{:<10}\t{:<10}\t{:<6}\t{:<6}\t{:<10}"
+              .format("序号","学号", "姓名", "专业","年级","高等数学", "大学物理", "Python程序设计基础"))
+        for each_student_math in data:
+            self.cur.execute(sql,(each_student_math,))
+            student = self.cur.fetchall()[0]
+            print('{:<8}\t{:8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}\t{:<8}'
+                  .format(student[0], student[1], student[2], student[3], student[4],student[5],student[6],student[7]))
 
 
 
@@ -187,6 +259,8 @@ class StudentList:
         df = pd.DataFrame(data, columns=["学号", "姓名", "专业", "年级", "高等数学","大学物理","Python程序设计基础"])
         # 将数据写入Excel文件
         df.to_excel('studentlist.xlsx', index=False)
+
+
 
 
 
