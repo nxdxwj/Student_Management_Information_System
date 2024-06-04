@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="test.db">
-  <database-model serializer="dbm" dbms="SQLITE" family-id="SQLITE" format-version="4.49">
+  <database-model serializer="dbm" dbms="SQLITE" family-id="SQLITE" format-version="4.52">
     <root id="1">
       <ServerVersion>3.31.1</ServerVersion>
     </root>
@@ -365,8 +365,7 @@
     <routine id="167" parent="1" name="atan"/>
     <schema id="168" parent="1" name="main">
       <Current>1</Current>
-      <IntrospectionTimestamp>2024-05-29.21:47:16.589</IntrospectionTimestamp>
-      <LocalIntrospectionTimestamp>2024-05-29.13:47:16</LocalIntrospectionTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-05-29.13:47:16</LastIntrospectionLocalTimestamp>
     </schema>
     <argument id="169" parent="15">
       <ArgumentDirection>R</ArgumentDirection>

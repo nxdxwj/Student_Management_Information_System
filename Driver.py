@@ -14,6 +14,7 @@ if __name__ == '__main__':
 
     # 启动Tkinter主循环
     root.mainloop()
+    root.protocol("WM_DELETE_WINDOW", app.on_closing)
 
     # 关闭数据库连接
     studentList.close()
